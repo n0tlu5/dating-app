@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/user.dto';
@@ -8,8 +8,11 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get(':username')
-  async findUser(@Param('username') username: string) {
-    return this.usersService.findOne(username);
+  
+  @Get('profile')
+  async getLoggedInUserProfile(@Request() req: any) {
+    console.log(req.user);
+    const userId = req.user.userId; // Extract userId from the decoded JWT
+    return this.usersService.findOneById(userId);
   }
 }

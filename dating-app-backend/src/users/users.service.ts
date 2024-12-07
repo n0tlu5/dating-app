@@ -29,4 +29,8 @@ export class UsersService {
     await this.userRepository.update(userId, updateData);
     return this.userRepository.findOneBy({ id: userId });
   }
+
+  async verifyPassword(plainTextPassword: string, hashedPassword: string): Promise<boolean> {
+    return bcrypt.compare(plainTextPassword, hashedPassword);
+  }
 }

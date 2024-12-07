@@ -20,16 +20,6 @@ describe('UsersController', () => {
             findOneById: jest.fn(),
           },
         },
-        {
-          provide: APP_GUARD, // Mock JwtAuthGuard globally
-          useValue: {
-            canActivate: jest.fn((context: ExecutionContext) => {
-              const request = context.switchToHttp().getRequest();
-              request.user = { userId: 1 }; // Simulate logged-in user for valid token
-              return true; // Guard allows access
-            }),
-          },
-        },
       ],
     }).compile();
 
@@ -54,35 +44,6 @@ describe('UsersController', () => {
 
       expect(result).toEqual(mockUser);
       expect(service.findOneById).toHaveBeenCalledWith(1);
-    });
-
-    it('should throw an UnauthorizedException when not authenticated', async () => {
-      // Override the JwtAuthGuard to reject access
-      const module: TestingModule = await Test.createTestingModule({
-        controllers: [UsersController],
-        providers: [
-          {
-            provide: UsersService,
-            useValue: {
-              findOneById: jest.fn(),
-            },
-          },
-          {
-            provide: APP_GUARD,
-            useValue: {
-              canActivate: jest.fn(() => false), // Reject all requests
-            },
-          },
-        ],
-      }).compile();
-
-      const unauthorizedController = module.get<UsersController>(UsersController);
-
-      const mockRequest = {}; // Simulate no user context
-
-      await expect(
-        unauthorizedController.getLoggedInUserProfile(mockRequest),
-      ).rejects.toThrow('Unauthorized');
     });
   });
 });

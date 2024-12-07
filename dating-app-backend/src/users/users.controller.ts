@@ -8,10 +8,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(JwtAuthGuard)
-  
   @Get('profile')
   async getLoggedInUserProfile(@Request() req: any) {
-    console.log(req.user);
     const userId = req.user.userId; // Extract userId from the decoded JWT
     return this.usersService.findOneById(userId);
   }

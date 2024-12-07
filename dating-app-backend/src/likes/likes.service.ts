@@ -16,7 +16,11 @@ export class LikesService {
   ) {}
 
   async likeUser(userFromId: number, userToId: number): Promise<Like> {
-    // Check if user already liked the other user
+    if (userFromId === userToId) {
+      throw new Error('You cannot like yourself.');
+    }
+
+    // Check if the user has already liked the target user
     const existingLike = await this.likeRepository.findOne({
       where: { userFrom: { id: userFromId }, userTo: { id: userToId } },
     });

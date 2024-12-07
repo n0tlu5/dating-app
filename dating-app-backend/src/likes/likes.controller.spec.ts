@@ -82,4 +82,44 @@ describe('LikesController', () => {
       expect(service.getMatches).toHaveBeenCalledWith(1);
     });
   });
+
+  describe('getAllMatches', () => {
+    it('should return all matches for a logged-in user', async () => {
+      const user1: User = {
+        id: 1,
+        username: 'User1',
+        password: 'hashedPassword',
+        isActive: true,
+        sentLikes: [],
+        receivedLikes: [],
+        matches: [],
+      };
+      const user2: User = {
+        id: 2,
+        username: 'User2',
+        password: 'hashedPassword',
+        isActive: true,
+        sentLikes: [],
+        receivedLikes: [],
+        matches: [],
+      };
+      const mockMatches : Match[] = [
+        {
+          id: 1,
+          user1: user1,
+          user2: user2,
+          createdAt: new Date(),
+        },
+      ];
+
+      jest.spyOn(service, 'getMatches').mockResolvedValue(mockMatches as Match[]);
+
+      const mockRequest = { user: { userId: 1 } }; // Simulate logged-in user
+
+      const result = await controller.getAllMatches(mockRequest);
+
+      expect(result).toEqual(mockMatches);
+      expect(service.getMatches).toHaveBeenCalledWith(1);
+    });
+  });
 });

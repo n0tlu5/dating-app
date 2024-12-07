@@ -147,6 +147,17 @@ describe('LikesService', () => {
         'You have already liked this user.',
       );
     });
+
+    it('should throw an error if a user likes themselves', async () => {
+
+      await expect(service.likeUser(1, 1)).rejects.toThrow('You cannot like yourself.');
+    });
+
+    it('should throw an error if a user likes the same user twice', async () => {
+      jest.spyOn(likeRepository, 'findOne').mockResolvedValue({} as Like);
+
+      await expect(service.likeUser(1, 2)).rejects.toThrow('You have already liked this user.');
+    });
   });
 
   describe('getMatches', () => {

@@ -7,6 +7,12 @@ import { LikesService } from './likes.service';
 export class LikesController {
   constructor(private readonly likesService: LikesService) {}
 
+  @Get('matches')
+  async getAllMatches(@Request() req: any) {
+    const userId = req.user.userId; // Extract logged-in user's ID
+    return this.likesService.getMatches(userId);
+  }
+
   @Post(':userToId')
   async likeUser(@Request() req: any, @Param('userToId') userToId: number) {
     const userFromId = req.user.userId; // Extract the logged-in user's ID from the JWT payload
